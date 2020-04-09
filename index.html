@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='UTF-8'>
+
+	<title>The Yale Public Calendar</title>
+
+	<style>
+		:root {
+			--blue: #2ba2d7;
+			--red: #ff5561;
+			--yellow: #ffb317;
+			--green: #659d58;
+			--orange: #ff8607;
+			--purple: #d77ad7;
+			--gray: #999999;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		}
+
+		body {
+			font: 30px helvetica, sans-serif;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		a:hover,
+		a:focus,
+		button:hover,
+		/* button:focus {
+			text-decoration: underline;
+		} */
+
+		ul {
+			list-style-type: none;
+		}
+
+		button {
+			border: none;
+			border-radius: 0px;
+			margin: 0;
+			padding: 0;
+			width: auto;
+			overflow: visible;
+			background: transparent;
+			color: inherit;
+			font: inherit;
+			line-height: inherit;
+			text-align: center;
+			text-decoration: none;
+			cursor: pointer;
+			white-space: normal;
+			-webkit-font-smoothing: inherit;
+			-moz-osx-font-smoothing: inherit;
+			-webkit-appearance: none;
+			outline: unset;
+		}
+
+		.page-title {
+			position: fixed;
+			left: 0;
+			top: 0;
+			border-bottom: 1px solid black;
+			background-color: white;
+			width: 100%;
+			padding: 5px 5px 5px 7px;
+			display: flex;
+		}
+
+		.page-title p:first-child {
+			width: 68%;
+		}
+
+		.page-title p:last-child {
+			width: 32%;
+		}
+
+		.events {
+			width: 68%;
+			margin-bottom: 200px;
+			margin-top: 50px;
+			margin-left: 5px;
+			padding-right: 200px;
+			padding-left: 2px;
+		}
+
+		.event {
+			margin-bottom: 50px;
+		}
+
+		.sidebar {
+			position: fixed;
+			top: 50px;
+			right: 0;
+			padding-right: 15px;
+			width: 32%;
+		}
+
+		.submission {
+			margin-bottom: 50px;
+		}
+
+		.submission-form {
+			width: 100%;
+		}
+
+		.submission-form div {
+			position: relative;
+		}
+
+		.submission-form input {
+			width: 100%;
+			border: unset;
+			background: unset;
+			-webkit-appearance: unset;
+			font: 30px helvetica, sans-serif;
+			outline: unset;
+			border-bottom: 1px solid black;
+			min-height: 46px;
+			color: transparent;
+		}
+
+		.submission-form-time-input {
+			display: flex;
+			border-bottom: 1px solid black;
+		}
+
+		.submission-form-time-input input {
+			border-bottom: none;
+		}
+
+		.submission-form label {
+			position: absolute;
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+			pointer-events: none;
+		}
+
+		.submission-form input:focus,
+		.submission-form input.is-focused {
+			color: inherit;
+		}
+
+		.submission-form input:focus+label,
+		.submission-form input.is-focused+label {
+			display: none;
+		}
+
+		.blue {
+			color: var(--blue);
+		}
+
+		.red {
+			color: var(--red);
+		}
+
+		.yellow {
+			color: var(--yellow);
+		}
+
+		.green {
+			color: var(--green);
+		}
+
+		.orange {
+			color: var(--orange);
+		}
+
+		.purple {
+			color: var(--purple);
+		}
+
+		.gray {
+			color: var(--gray);
+		}
+
+		.indent {
+			text-indent: 30px;
+		}
+
+		@keyframes FADE {
+			to {
+				opacity: 0;
+			}
+		}
+
+		.fade {
+			animation: FADE 5s 1;
+		}
+		.info {
+			position: fixed;
+			bottom: 50px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<header class="page-title">
+		<p>The Yale Public Calendar</p>
+		<p>Add an event</p>
+	</header>
+	<div class="events js-events">
+		<p class="gray">Loading events...</p>
+	</div>
+	<div class="sidebar">
+		<div class="submission">
+			<form class="submission-form js-form">
+				<div class="blue">
+					<input id="title" class="blue js-input" type="text" name="title" autocomplete="off" required>
+					<label for="title">Title</label>
+				</div>
+				<div class="red">
+					<input id="date" class="red js-input" type="date" name="date" autocomplete="off" required>
+					<label for="date">Date</label>
+				</div>
+				<div class="submission-form-time-input">
+					<div class="yellow">
+						<input id="startTime" class="yellow js-input" type="time" name="startTime" autocomplete="off" required>
+						<label for="startTime">Start Time</label>
+					</div>
+					<div class="yellow">
+						<input id="endTime" class="yellow js-input" type="time" name="endTime" autocomplete="off" required>
+						<label for="endTime">End Time</label>
+					</div>
+				</div>
+				<div class="green">
+					<input id="location" class="green js-input" type="text" name="location" autocomplete="off" required>
+					<label for="location">Location</label>
+				</div>
+				<div class="orange">
+					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off" required>
+					<label for="description">Description</label>
+				</div>
+				<div class="purple">
+					<input id="link" class="purple js-input" type="url" name="link" autocomplete="off">
+					<label for="link">Link</label>
+				</div>
+				<button type="submit" class="js-submit">+ submit</button>
+			</form>
+		</div>
+		<div class="info">
+			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan Waller at the Yale School of Art. The website was developed with the generous help of Self Aware.</p>
+		</div>
+	</div>
+
+	<script type="module">
+		import { format, compareAsc } from 'https://unpkg.com/date-fns@2.10.0/esm/index.js'
+
+		// store sheety endpoint in a variable since we use it twice
+		const endpoint = "https://v2-api.sheety.co/7d5818822fb2e8bc71945c59d529166f/yaleEvents/events"
+
+		// select all the dom elements we'll need
+		// prefixing dom element variables with a $ is a common convention
+		const $events = document.querySelector('.js-events')
+		const $form = document.querySelector('.js-form')
+		const $inputs = Array.from(document.querySelectorAll('.js-input'))
+		const $submit = document.querySelector('.js-submit')
+
+		// we are using <label> elements in a sort of unconventional way
+		// for this form for accessibility reasons. the technique is described in
+		// this tutorial: https://www.youtube.com/watch?v=PBGfqGANYNI
+		$inputs.forEach($input => {
+			$input.addEventListener('focusout', () => {
+				if ($input.value.length) {
+					$input.classList.add('is-focused')
+				} else {
+					$input.classList.remove('is-focused')
+				}
+			})
+		})
+
+		// listen for form submissions
+		$form.addEventListener('submit', (ev) => {
+			// by default, submitting a form causes the entire page to refresh
+			// but we are submitting the form using a fetch request so we can
+			// prevent that default behaviour
+			ev.preventDefault()
+
+			// style our loading state
+			$submit.textContent = 'sending...'
+			$submit.style.pointerEvents = 'none'
+
+			// submit the event to the google sheet
+			submitEvent($form).then((res) => {
+				// reset the form (clear the value from each input)
+				$form.reset()
+				// also related to the technique from the tutorial video i linked above
+				$inputs.forEach($input => $input.classList.remove('is-focused'))
+				// reset our submit button from the loading state
+				$submit.textContent = '+ send'
+				$submit.style.pointerEvents = null
+
+				// create a p element that we can use as the success message
+				const $success = document.createElement('p')
+				// set its content
+				$success.textContent = 'thanks for your submission'
+				// add a few classes to style it, including the fade class which
+				// will apply a slow fade out animation
+				$success.classList.add('indent')
+				$success.classList.add('fade')
+				// listen for the end of that animation so we can remove the element from the dom
+				// when it is fully hidden
+				$success.addEventListener('animationend', () => {
+					$success.remove()
+				}, { once: true })
+				// finally insert the success message element
+				$form.parentNode.appendChild($success)
+			}).catch(error => {
+				console.log('Error!', error)
+			})
+		})
+
+		getEvents().then(events => {
+			$events.innerHTML =
+				`<ul>
+					${events
+					.filter(event => event.approved)
+					.map(event => {
+						event.startDatetime = new Date(`${event.date}T${event.startTime}`)
+						event.endDatetime = new Date(`${event.date}T${event.endTime}`)
+						event.date = format(event.startDatetime, 'EEEE, LLLL d, y')
+						event.time = `${format(event.startDatetime, 'h:mma')} – ${format(event.endDatetime, 'h:mma')}`.toLowerCase()
+						return event
+					})
+					.filter(event => compareAsc(event.endDatetime, Date.now()) > 0)
+					.sort((a, b) => compareAsc(a.startDatetime, b.startDatetime))
+					.map(event => eventTemplate(event))
+					.join('')
+				}
+				</ul>`
+		})
+
+		function getEvents() {
+			return fetch(endpoint)
+				.then((res) => res.json())
+				.then(json => json.events)
+				.catch(error => console.log('Error!', error))
+		}
+
+		function eventTemplate(event) {
+			return `
+				<li class="event">
+					<p class="blue">${event.title}</p>
+					<p class="red indent">${event.date}</p>
+					<p class="yellow indent">${event.time}</p>
+					<p class="green indent">${event.location}</p>
+					<p class="orange">${event.description}</p>
+					<a class="purple indent" href="${event.link}" target="_blank" rel="noopener noreferrer">
+						+ more info
+					</a>
+					<p class="purple indent">+ add to your calendar</p>
+				</li>
+			`
+		}
+
+		function submitEvent(el) {
+			const formData = new FormData(el)
+			const obj = {}
+			obj.approved = true
+			formData.forEach((value, key) => {
+				obj[key] = value
+			})
+
+			return fetch(endpoint, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ event: obj })
+			})
+		}
+	</script>
+</body>
+
+</html>
