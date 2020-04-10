@@ -94,6 +94,25 @@
 			width: 32%;
 		}
 
+		.page-footer {
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			border-top: 1px solid black;
+			background-color: white;
+			width: 100%;
+			padding: 5px 5px 5px 7px;
+			display: flex;
+		}
+
+		.page-footer p:first-child {
+			width: 68%;
+		}
+
+		.page-footer p:last-child {
+			width: 32%;
+		}
+
 		.events {
 			width: 68%;
 			margin-bottom: 200px;
@@ -111,12 +130,13 @@
 			position: fixed;
 			top: 50px;
 			right: 0;
-			padding-right: 15px;
+			padding-right: 30px;
 			width: 32%;
 		}
 
 		.submission {
 			margin-bottom: 50px;
+			display: none;
 		}
 
 		.submission-form {
@@ -207,10 +227,43 @@
 		.fade {
 			animation: FADE 5s 1;
 		}
+
 		.info {
+			display: none;
 			position: fixed;
-			bottom: 50px;
+			bottom: 60px;
+			padding-right: 30px;
 		}
+
+		#infobutton, #sidebarbutton{
+			cursor: pointer;
+		}
+
+	@media only screen and (max-width: 1020px) {
+
+		#sidebarbutton{
+			display: none;
+		}
+
+		.page-footer{
+			display: none;
+		}
+
+		.sidebar{
+			display: none;
+		}
+
+		.events{
+			width:100%;
+			padding-right: 20px;
+		}
+
+		.page-title p:first-child{
+			width: 100%
+		}
+
+	}
+
 	</style>
 
 </head>
@@ -218,7 +271,7 @@
 <body>
 	<header class="page-title">
 		<p>The Yale Public Calendar</p>
-		<p>Add an event</p>
+		<p id="sidebarbutton">Add an event</p>
 	</header>
 	<div class="events js-events">
 		<p class="gray">Loading events...</p>
@@ -245,8 +298,8 @@
 					</div>
 				</div>
 				<div class="green">
-					<input id="location" class="green js-input" type="text" name="location" autocomplete="off" required>
-					<label for="location">Location</label>
+					<input id="location" class="green js-input" type="url" name="location" autocomplete="off">
+					<label for="location">Zoom Link</label>
 				</div>
 				<div class="orange">
 					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off" required>
@@ -260,9 +313,13 @@
 			</form>
 		</div>
 		<div class="info">
-			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan Waller at the Yale School of Art. The website was developed with the generous help of Self Aware.</p>
+			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan Waller at the Yale School of Art. The website was developed with the generous help of <a href="https://selfaware.studio/">Self Aware.</a></p>
 		</div>
 	</div>
+	<footer class="page-footer">
+		<p></p>
+		<p id="infobutton">Info</p>
+	</footer>
 
 	<script type="module">
 		import { format, compareAsc } from 'https://unpkg.com/date-fns@2.10.0/esm/index.js'
@@ -364,7 +421,9 @@
 					<p class="blue">${event.title}</p>
 					<p class="red indent">${event.date}</p>
 					<p class="yellow indent">${event.time}</p>
-					<p class="green indent">${event.location}</p>
+					<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
+						<p class="green indent">+ zoom link</p>
+					</a>
 					<p class="orange">${event.description}</p>
 					<a class="purple indent" href="${event.link}" target="_blank" rel="noopener noreferrer">
 						<p class="purple indent">+ more info</p>
@@ -390,6 +449,19 @@
 				body: JSON.stringify({ event: obj })
 			})
 		}
+
+		$( "#infobutton" ).click(function() {
+  		$( ".info" ).toggle( 0, function() {
+	    	// Animation complete.
+			  });
+			});
+
+		$( "#sidebarbutton" ).click(function() {
+		$( ".submission" ).toggle( 0, function() {
+			// Animation complete.
+			  });
+			});
+
 	</script>
 </body>
 
