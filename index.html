@@ -106,14 +106,6 @@
 			display: flex;
 		}
 
-		.page-footer p:first-child {
-			width: 68%;
-		}
-
-		.page-footer p:last-child {
-			width: 32%;
-		}
-
 		.events {
 			width: 68%;
 			margin-bottom: 200px;
@@ -236,34 +228,76 @@
 			padding-right: 30px;
 		}
 
-		#infobutton, #sidebarbutton{
-			cursor: pointer;
+		.text-center {
+			width: 100%;
+			text-align: center;
 		}
 
-	@media only screen and (max-width: 1020px) {
-
-		#sidebarbutton{
+		.print-only {
 			display: none;
 		}
 
-		.page-footer{
-			display: none;
+		#infobutton {
+			margin-left: 68%;
 		}
 
-		.sidebar{
-			display: none;
+		@media only screen and (max-width: 1020px) {
+
+			#sidebarbutton{
+				display: none;
+			}
+
+			.page-footer{
+				display: none;
+			}
+
+			.sidebar{
+				display: none;
+			}
+
+			.events{
+				width:100%;
+				padding-right: 20px;
+			}
+
+			.page-title p:first-child{
+				width: 100%
+			}
 		}
 
-		.events{
-			width:100%;
-			padding-right: 20px;
-		}
+		@media print {
+			body {
+				font: 40px helvetica, sans-serif;
+			}
 
-		.page-title p:first-child{
-			width: 100%
-		}
+			.print-only {
+				display: block;
+			}
 
-	}
+			.screen-only {
+				display: none;
+			}
+
+			.events {
+				width: 100%;
+				padding-right: 0;
+			}
+
+			.sidebar,
+			#sidebarbutton,
+			#infobutton {
+				display: none;
+			}
+
+			.event {
+				display: none;
+			}
+
+			.event.keep {
+				display: block;
+				padding-top: 20px;
+			}
+		}
 
 	</style>
 
@@ -303,7 +337,7 @@
 					<label for="location">Zoom Link</label>
 				</div>
 				<div class="orange">
-					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off">
+					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off" maxlength="280">
 					<label for="description">Description</label>
 				</div>
 				<div class="purple">
@@ -318,7 +352,7 @@
 		</div>
 	</div>
 	<footer class="page-footer">
-		<p></p>
+		<p class="text-center print-only">yalepubliccalendar.com</p>
 		<button id="infobutton">Info</button>
 	</footer>
 
@@ -334,6 +368,7 @@
 		const $form = document.querySelector('.js-form')
 		const $inputs = Array.from(document.querySelectorAll('.js-input'))
 		const $submit = document.querySelector('.js-submit')
+		let $printButtons = null
 
 		// we are using <label> elements in a sort of unconventional way
 		// for this form for accessibility reasons. the technique is described in
@@ -413,12 +448,21 @@
 							details: event.location ? 'Zoom Link: ' + event.location + ' — ' + event.description : event.description,
 							ctz: 'America/New_York',
 						})
+						if (event.location) {
+							event.zoomId = getZoomID(event.location)
+						} else {
+							event.zoomId = null
+						}
 						return event
 					})
 					.map((event) => eventTemplate(event))
 					.join('')
 				}
 				</ul>`
+
+			Array.from($events.querySelectorAll('.js-print')).forEach(btn => {
+				btn.addEventListener('click', onPrintButtonClick)
+			})
 		})
 
 		function getEvents() {
@@ -436,7 +480,8 @@
 					<p class="yellow indent">${event.time}</p>
 					${event.location
 						? `<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
-								<p class="green indent">+ zoom link</p>
+								<p class="green indent screen-only">+ zoom link</p>
+								<p class="green indent print-only">+ Zoom ID: ${event.zoomId}</p>
 							</a>`
 						: ''
 					}
@@ -445,19 +490,28 @@
 						: ''
 					}
 					${event.link
-						? `<a class="purple indent" href="${event.link}" target="_blank" rel="noopener noreferrer">
+						? `<a class="purple indent screen-only" href="${event.link}" target="_blank" rel="noopener noreferrer">
 								<p class="purple indent">+ more info</p>
 							</a>`
 						: ''
 					}
 					<a
-						class="purple indent"
+						class="purple indent screen-only"
 						href="${event.calandarLink}"
 						target="_blank"
 						rel="noopener noreferrer"
 					><p>+ add to your calendar</p></a>
+					<button class="purple indent screen-only js-print">+ print</button>
 				</li>
 			`
+		}
+
+		function onPrintButtonClick() {
+			let $item = this.parentNode
+			let $items = Array.from($item.parentNode.children)
+			$items.forEach(el => el.classList.remove('keep'))
+			$item.classList.add('keep')
+			window.print()
 		}
 
 		function submitEvent(el) {
@@ -518,6 +572,10 @@
 			const searchParams = Object.assign({ action: 'TEMPLATE', dates: start && end ? `${start}/${end}` : undefined, text: title }, rest);
 			const urlSearchParams = new URLSearchParams(clean(searchParams));
 			return ('https://calendar.google.com/calendar/event?' + urlSearchParams.toString());
+		}
+
+		function getZoomID(url) {
+			return new URL(url).pathname.slice(3)
 		}
 
 	</script>
