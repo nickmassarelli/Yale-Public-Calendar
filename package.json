@@ -1,0 +1,23 @@
+{
+  "name": "Yale-Public-Calendar",
+  "version": "1.0.0",
+  "description": "Typography Online Workshop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickmassarelli/Yale-Public-Calendar.git"
+  },
+  "keywords": [],
+  "author": "Mike Wagz <mike@wagz.io> (http://wagz.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickmassarelli/Yale-Public-Calendar/issues"
+  },
+  "homepage": "https://github.com/nickmassarelli/Yale-Public-Calendar#readme",
+  "devDependencies": {
+    "netlify-cli": "^2.47.0"
+  }
+}
