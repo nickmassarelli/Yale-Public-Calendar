@@ -412,7 +412,7 @@
 			submitEvent($form).then((res) => {
 				$form.reset()
 				$inputs.forEach($input => $input.classList.remove('is-focused'))
-				$submit.textContent = '+ send'
+				$submit.textContent = '+ submit'
 				$submit.style.pointerEvents = null
 
 				const $success = document.createElement('p')
