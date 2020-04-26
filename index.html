@@ -96,7 +96,7 @@
 
 		.events {
 			width: 68%;
-			margin-bottom: 100px;
+			margin-bottom: 200px;
 			margin-top: 50px;
 			margin-left: 5px;
 			padding-right: 200px;
@@ -233,18 +233,6 @@
 			display: block;
 		}
 
-		.hidehide{
-			display:none;
-		}
-
-		.showshow{
-			display:block;
-			position:absolute;
-			left: 0px;
-			top: 200px;
-			color: black;
-		}
-
 		@media only screen and (max-width: 1020px) {
 
 			#sidebarbutton {
@@ -321,7 +309,6 @@
 	<div class="events js-events">
 		<p class="gray">Loading events...</p>
 	</div>
-	<div id="delaydelay" class="hidehide"><p class="endtext" style="margin-left: 9px; margin-bottom: 55px;">End of events :)</p></div>
 	<div class="sidebar">
 		<div class="submission">
 			<form class="submission-form js-form">
@@ -499,27 +486,7 @@
 				</li>
 			`
 		}
-});
 	</script>
-
-
-	<script type="text/javascript" language="javascript">
-	<!-- Hide from browsers without javascript
-
-	window.onload=function()  //executes when the page finishes loading
-	{
-		setTimeout(func1, 4000);  //sets a timer which calls function func1 after 2,000 milliseconds = 2 secs.
-
-	};
-	function func1()
-	{
-		document.getElementById("delaydelay").className="showshow";
-	}
-
-	// End hiding -->
-	</script>
-
-
 </body>
 
 </html>
