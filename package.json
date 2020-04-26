@@ -1,0 +1,22 @@
+{
+  "name": "yale-public-calendar",
+  "version": "1.0.0",
+  "description": "Typography Online Workshop",
+  "main": "index.html",
+  "scripts": {
+    "start": "netlify dev",
+    "deploy": "netlify deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickmassarelli/Yale-Public-Calendar.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nickmassarelli/Yale-Public-Calendar/issues"
+  },
+  "homepage": "https://github.com/nickmassarelli/Yale-Public-Calendar#readme",
+  "devDependencies": {
+    "netlify-cli": "^2.47.0"
+  }
+}

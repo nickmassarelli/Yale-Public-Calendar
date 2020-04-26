@@ -3,15 +3,11 @@
 
 <head>
 	<meta charset='UTF-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<title>The Yale Public Calendar</title>
 
 	<link rel="icon" href="assets/favicon.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-	<link rel="manifest" href="favicon/site.webmanifest">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 	<style>
 		:root {
@@ -42,13 +38,6 @@
 			text-decoration: none;
 			color: inherit;
 		}
-
-		a:hover,
-		a:focus,
-		button:hover,
-		/* button:focus {
-			text-decoration: underline;
-		} */
 
 		ul {
 			list-style-type: none;
@@ -103,14 +92,6 @@
 			width: 100%;
 			padding: 5px 5px 5px 7px;
 			display: flex;
-		}
-
-		.page-footer p:first-child {
-			width: 68%;
-		}
-
-		.page-footer p:last-child {
-			width: 32%;
 		}
 
 		.events {
@@ -235,39 +216,80 @@
 			padding-right: 30px;
 		}
 
-		#infobutton, #sidebarbutton{
-			cursor: pointer;
+		.text-center {
+			width: 100%;
+			text-align: center;
 		}
 
-	@media only screen and (max-width: 1020px) {
-
-		body {
-			font: 60px helvetica, sans-serif;
-		}
-
-		#sidebarbutton{
+		.print-only {
 			display: none;
 		}
 
-		.page-footer{
-			display: none;
+		#infobutton {
+			margin-left: 68%;
 		}
 
-		.sidebar{
-			display: none;
+		.show {
+			display: block;
 		}
 
-		.events{
-			width:100%;
-			padding-right: 20px;
+		@media only screen and (max-width: 1020px) {
+
+			#sidebarbutton {
+				display: none;
+			}
+
+			.page-footer {
+				display: none;
+			}
+
+			.sidebar {
+				display: none;
+			}
+
+			.events {
+				width: 100%;
+				padding-right: 20px;
+			}
+
+			.page-title p:first-child {
+				width: 100%
+			}
 		}
 
-		.page-title p:first-child{
-			width: 100%
+		@media print {
+			body {
+				font: 40px helvetica, sans-serif;
+			}
+
+			.print-only {
+				display: block;
+			}
+
+			.screen-only {
+				display: none;
+			}
+
+			.events {
+				width: 100%;
+				padding-right: 0;
+			}
+
+			.sidebar,
+			#sidebarbutton,
+			#infobutton {
+				display: none;
+			}
+
+			.event {
+				display: none;
+			}
+
+			.event.keep {
+				display: block;
+				padding-top: 20px;
+			}
 		}
-
-	}
-
 	</style>
 
 </head>
@@ -275,7 +297,7 @@
 <body>
 	<header class="page-title">
 		<p>The Yale Public Calendar</p>
-		<p id="sidebarbutton">Add an event</p>
+		<button id="sidebarbutton">Add an event</button>
 	</header>
 	<div class="events js-events">
 		<p class="gray">Loading events...</p>
@@ -306,7 +328,8 @@
 					<label for="location">Zoom Link</label>
 				</div>
 				<div class="orange">
-					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off" required>
+					<input id="description" class="orange js-input" type="text" name="description" autocomplete="off"
+						maxlength="280">
 					<label for="description">Description</label>
 				</div>
 				<div class="purple">
@@ -317,30 +340,51 @@
 			</form>
 		</div>
 		<div class="info">
-			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan Waller at the Yale School of Art. The website was developed with the generous help of <a href="https://selfaware.studio/" target="_blank">Self Aware.</a></p>
+			<p>The Yale Public Calendar is an event board created in 2020 by Nick Massarelli during a Workshop led by Ryan
+				Waller at the Yale School of Art. The website was developed with the generous help of <a
+					href="https://selfaware.studio/" target="_blank">Self Aware.</a></p>
 		</div>
 	</div>
 	<footer class="page-footer">
-		<p></p>
-		<p id="infobutton">Info</p>
+		<p class="text-center print-only">yalepubliccalendar.com</p>
+		<button id="infobutton">Info</button>
 	</footer>
 
-	<script type="module">
-		import { format, compareAsc } from 'https://unpkg.com/date-fns@2.10.0/esm/index.js'
-
-		// store sheety endpoint in a variable since we use it twice
-		const endpoint = "https://v2-api.sheety.co/7d5818822fb2e8bc71945c59d529166f/yaleEvents/events"
-
-		// select all the dom elements we'll need
-		// prefixing dom element variables with a $ is a common convention
+	<script>
+		// select dom elements
 		const $events = document.querySelector('.js-events')
 		const $form = document.querySelector('.js-form')
 		const $inputs = Array.from(document.querySelectorAll('.js-input'))
 		const $submit = document.querySelector('.js-submit')
 
-		// we are using <label> elements in a sort of unconventional way
-		// for this form for accessibility reasons. the technique is described in
-		// this tutorial: https://www.youtube.com/watch?v=PBGfqGANYNI
+		// fetch events
+		getEvents().then(events => {
+			// generate events list html and insert into dom
+			$events.innerHTML = `<ul>${events.map(eventTemplate).join('')}</ul>`
+
+			// handle print button clicks
+			Array.from($events.querySelectorAll('.js-print')).forEach(btn => {
+				btn.addEventListener('click', function () {
+					let $item = this.parentNode
+					let $items = Array.from($item.parentNode.children)
+					$items.forEach(el => el.classList.remove('keep'))
+					$item.classList.add('keep')
+					window.print()
+				})
+			})
+		})
+
+		// info toggle
+		document.querySelector('#infobutton').addEventListener('click', () => {
+			document.querySelector('.info').classList.toggle('show')
+		})
+
+		// submission toggle
+		document.querySelector('#sidebarbutton').addEventListener('click', () => {
+			document.querySelector('.submission').classList.toggle('show')
+		})
+
+		// form input placeholders
 		$inputs.forEach($input => {
 			$input.addEventListener('focusout', () => {
 				if ($input.value.length) {
@@ -351,90 +395,38 @@
 			})
 		})
 
-		// listen for form submissions
+		// handle form submissions
 		$form.addEventListener('submit', (ev) => {
-			// by default, submitting a form causes the entire page to refresh
-			// but we are submitting the form using a fetch request so we can
-			// prevent that default behaviour
 			ev.preventDefault()
 
-			// style our loading state
 			$submit.textContent = 'sending...'
 			$submit.style.pointerEvents = 'none'
 
-			// submit the event to the google sheet
 			submitEvent($form).then((res) => {
-				// reset the form (clear the value from each input)
 				$form.reset()
-				// also related to the technique from the tutorial video i linked above
 				$inputs.forEach($input => $input.classList.remove('is-focused'))
-				// reset our submit button from the loading state
 				$submit.textContent = '+ send'
 				$submit.style.pointerEvents = null
 
-				// create a p element that we can use as the success message
 				const $success = document.createElement('p')
-				// set its content
 				$success.textContent = 'thanks for your submission'
-				// add a few classes to style it, including the fade class which
-				// will apply a slow fade out animation
 				$success.classList.add('indent')
 				$success.classList.add('fade')
-				// listen for the end of that animation so we can remove the element from the dom
-				// when it is fully hidden
+
 				$success.addEventListener('animationend', () => {
 					$success.remove()
 				}, { once: true })
-				// finally insert the success message element
+
 				$form.parentNode.appendChild($success)
 			}).catch(error => {
 				console.log('Error!', error)
 			})
 		})
 
-		getEvents().then(events => {
-			$events.innerHTML =
-				`<ul>
-					${events
-					.filter(event => event.approved)
-					.map(event => {
-						event.startDatetime = new Date(`${event.date}T${event.startTime}`)
-						event.endDatetime = new Date(`${event.date}T${event.endTime}`)
-						event.date = format(event.startDatetime, 'EEEE, LLLL d, y')
-						event.time = `${format(event.startDatetime, 'h:mma')} – ${format(event.endDatetime, 'h:mma')}`.toLowerCase()
-						return event
-					})
-					.filter(event => compareAsc(event.endDatetime, Date.now()) > 0)
-					.sort((a, b) => compareAsc(a.startDatetime, b.startDatetime))
-					.map(event => eventTemplate(event))
-					.join('')
-				}
-				</ul>`
-		})
-
 		function getEvents() {
-			return fetch(endpoint)
+			return fetch('/.netlify/functions/getEvents')
 				.then((res) => res.json())
-				.then(json => json.events)
 				.catch(error => console.log('Error!', error))
-		}
-
-		function eventTemplate(event) {
-			return `
-				<li class="event">
-					<p class="blue">${event.title}</p>
-					<p class="red indent">${event.date}</p>
-					<p class="yellow indent">${event.time}</p>
-					<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
-						<p class="green indent">+ zoom link</p>
-					</a>
-					<p class="orange">${event.description}</p>
-					<a class="purple indent" href="${event.link}" target="_blank" rel="noopener noreferrer">
-						<p class="purple indent">+ more info</p>
-					</a>
-					<p class="purple indent">+ add to your calendar</p>
-				</li>
-			`
 		}
 
 		function submitEvent(el) {
@@ -445,7 +437,7 @@
 				obj[key] = value
 			})
 
-			return fetch(endpoint, {
+			return fetch('https://v2-api.sheety.co/7d5818822fb2e8bc71945c59d529166f/yaleEvents/events', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -454,18 +446,39 @@
 			})
 		}
 
-		$( "#infobutton" ).click(function() {
-  		$( ".info" ).toggle( 0, function() {
-	    	// Animation complete.
-			  });
-			});
-
-		$( "#sidebarbutton" ).click(function() {
-		$( ".submission" ).toggle( 0, function() {
-			// Animation complete.
-			  });
-			});
-
+		function eventTemplate(event) {
+			return `
+				<li class="event">
+					<p class="blue">${event.title}</p>
+					<p class="red indent">${event.date}</p>
+					<p class="yellow indent">${event.time}</p>
+					${event.location
+					? `<a class="green indent" href="${event.location}" target="_blank" rel="noopener noreferrer">
+								<p class="green indent screen-only">+ zoom link</p>
+								<p class="green indent print-only">+ Zoom ID: ${event.zoomId}</p>
+							</a>`
+					: ''
+				}
+					${event.description
+					? `<p class="orange">${event.description}</p>`
+					: ''
+				}
+					${event.link
+					? `<a class="purple indent screen-only" href="${event.link}" target="_blank" rel="noopener noreferrer">
+								<p class="purple indent">+ more info</p>
+							</a>`
+					: ''
+				}
+					<a
+						class="purple indent screen-only"
+						href="${event.calandarLink}"
+						target="_blank"
+						rel="noopener noreferrer"
+					><p>+ add to your calendar</p></a>
+					<button class="purple indent screen-only js-print">+ print</button>
+				</li>
+			`
+		}
 	</script>
 </body>
 
