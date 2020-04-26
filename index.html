@@ -258,8 +258,11 @@
 		}
 
 		@media print {
+
 			body {
 				font: 40px helvetica, sans-serif;
+				-webkit-print-color-adjust: exact;
+      			print-color-adjust: exact;
 			}
 
 			.print-only {
@@ -289,16 +292,13 @@
 				display: block;
 				padding-top: 20px;
 			}
-			:root {
-				--blue: cmyk(70, 0, 80, 0);
-				--red: cmyk(70, 0, 80, 0);
-				--yellow: cmyk(70, 0, 80, 0);
-				--green: cmyk(70, 0, 80, 0);
-				--orange: cmyk(70, 0, 80, 0);
-				--purple: cmyk(70, 0, 80, 0);
-				--gray: cmyk(70, 0, 80, 0);
-			}
 		}
+		@media print and (color) {
+   * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+   }
+}
 	</style>
 
 </head>
