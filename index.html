@@ -261,8 +261,11 @@
 
 			body {
 				font: 40px helvetica, sans-serif;
-				-webkit-print-color-adjust: exact;
-      			print-color-adjust: exact;
+			}
+
+			* {
+			   -webkit-print-color-adjust: exact;
+			   print-color-adjust: exact;
 			}
 
 			.print-only {
@@ -293,12 +296,7 @@
 				padding-top: 20px;
 			}
 		}
-		@media print and (color) {
-   * {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-   }
-}
+
 	</style>
 
 </head>
