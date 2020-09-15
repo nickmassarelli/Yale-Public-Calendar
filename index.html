@@ -64,6 +64,11 @@
 			outline: unset;
 		}
 
+		input[type="time"]::-webkit-calendar-picker-indicator,
+		input[type="date"]::-webkit-calendar-picker-indicator {
+			background: none;
+		}
+
 		.page-title {
 			position: fixed;
 			left: 0;
@@ -228,9 +233,14 @@
 		#infobutton {
 			margin-left: 68%;
 		}
-
+		
 		.show {
 			display: block;
+		}
+		
+		/* hide sidebarbutton if browser is not chrome */
+		body:not(.is-chrome) #sidebarbutton {
+			display: none;
 		}
 
 		@media only screen and (max-width: 1020px) {
@@ -363,6 +373,11 @@
 		const $form = document.querySelector('.js-form')
 		const $inputs = Array.from(document.querySelectorAll('.js-input'))
 		const $submit = document.querySelector('.js-submit')
+		
+		// if the browser is chrome, show the submission form
+		if (/chrome|crios|crmo/i.test(window.navigator.userAgent)) {
+			document.body.classList.add('is-chrome')
+		}
 
 		// fetch events
 		getEvents().then(events => {
@@ -471,17 +486,21 @@
 					: ''
 				}
 					${event.link
-					? `<a class="purple indent screen-only" href="${event.link}" target="_blank" rel="noopener noreferrer">
-								<p class="purple indent">+ more info</p>
-							</a>`
+					? `<p class="indent screen-only">
+							<a class="purple" href="${event.link}" target="_blank" rel="noopener noreferrer">
+								+ more info
+							</a>
+						</p>`
 					: ''
 				}
-					<a
-						class="purple indent screen-only"
-						href="${event.calandarLink}"
-						target="_blank"
-						rel="noopener noreferrer"
-					><p>+ add to your calendar</p></a>
+					<p class="indent screen-only">			
+						<a
+							class="purple"
+							href="${event.calandarLink}"
+							target="_blank"
+							rel="noopener noreferrer"
+						>+ add to your calendar</a>
+					</p>
 					<button class="purple indent screen-only js-print">+ print</button>
 				</li>
 			`
