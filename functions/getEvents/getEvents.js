@@ -20,11 +20,7 @@ exports.handler = async (event, context) => {
         )}`.toLowerCase()
         return event
       })
-      .filter((event) => {
-        const compared = compareAsc(event.endDatetime, Date.now())
-        console.log(compared)
-        return compared > -1
-      })
+      .filter((event) => compareAsc(event.endDatetime, Date.now()) > -1)
       .sort((a, b) => compareAsc(a.startDatetime, b.startDatetime))
       .map((event) => {
         const start = format(event.startDatetime, "yyyyMMdd'T'HHmmSS")
