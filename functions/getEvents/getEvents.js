@@ -1,8 +1,8 @@
 const fetch = require('node-fetch')
 const { format, compareAsc } = require('date-fns')
 
-let endpoint =
-  'https://v2-api.sheety.co/7d5818822fb2e8bc71945c59d529166f/yaleEvents/events'
+const endpoint =
+  'https://api.sheety.co/9a19cc691e17a75dcd0a6f68b6d7c2d8/yalePublicCalendar/events'
 
 exports.handler = async (event, context) => {
   try {
@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
         )}`.toLowerCase()
         return event
       })
-      .filter((event) => compareAsc(event.endDatetime, Date.now()) > 0)
+      .filter((event) => compareAsc(event.endDatetime, Date.now()) > -1)
       .sort((a, b) => compareAsc(a.startDatetime, b.startDatetime))
       .map((event) => {
         const start = format(event.startDatetime, "yyyyMMdd'T'HHmmSS")
